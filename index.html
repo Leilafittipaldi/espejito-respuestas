@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Respuestas Espejito</title>
+<style>
+  /* Layout: una sola columna tipo "chuleta" para el cel: barra de pestañas arriba + tarjetas de respuesta con botón copiar */
+  :root{
+    --bg:#fbf4f1;          /* nude cálido */
+    --surface:#ffffff;
+    --ink:#3a2b2e;         /* café oscuro */
+    --muted:#8a7175;       /* malva apagado */
+    --line:#ecdcd6;
+    --accent:#c8a76a;      /* dorado coqueto */
+    --accent-ink:#9a6f28;  /* dorado profundo para texto sobre nude */
+    --gold:#c8a76a;
+    --good:#4f8a6b;
+    --warn-bg:#fff4e8;--warn-ink:#8a5a1f;--warn-line:#f0d6b0;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(58,43,46,.06), 0 6px 20px rgba(58,43,46,.07);
+    --font-head:"Fraunces","Georgia",serif;
+    --font-body:"Jost","Helvetica Neue",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#201619;--surface:#2b2024;--ink:#f4e9e8;--muted:#b89ba1;--line:#3b2d32;
+    --accent:#d8ba7e;--accent-ink:#ecd49a;--gold:#d8ba7e;--good:#7fc3a0;
+    --warn-bg:#352616;--warn-ink:#f0c78a;--warn-line:#5a4322;color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#201619;--surface:#2b2024;--ink:#f4e9e8;--muted:#b89ba1;--line:#3b2d32;
+    --accent:#d8ba7e;--accent-ink:#ecd49a;--gold:#d8ba7e;--good:#7fc3a0;
+    --warn-bg:#352616;--warn-ink:#f0c78a;--warn-line:#5a4322;color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  img{max-width:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:620px;margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left,0px));
+    padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:0 40px}
+  header{padding-block:22px 10px;text-align:center}
+  .brand{font-family:var(--font-head);font-weight:600;font-size:1.55rem;letter-spacing:.01em;margin:0;text-wrap:balance}
+  .brand small{display:block;font-family:var(--font-body);font-weight:500;color:var(--gold);
+    letter-spacing:.22em;text-transform:uppercase;font-size:.62rem;margin-top:6px}
+  .lead{color:var(--muted);font-size:.9rem;margin:8px auto 0;max-width:42ch;text-wrap:balance}
+  .tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);
+    display:flex;gap:6px;padding-block:12px;flex-wrap:wrap;justify-content:center}
+  .tab{border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    font:inherit;font-size:.82rem;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#3a2b1a}
+  .panel[hidden]{display:none}
+  .sec-title{font-family:var(--font-head);font-weight:600;font-size:1.05rem;margin:22px 0 4px}
+  .sec-note{color:var(--muted);font-size:.82rem;margin:0 0 12px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:14px 14px 12px;margin-bottom:12px}
+  .card h3{margin:0 0 9px;font-family:var(--font-body);font-weight:600;font-size:.82rem;
+    color:var(--accent-ink);text-transform:uppercase;letter-spacing:.05em}
+  .reply{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line)}
+  .reply:first-of-type{border-top:0}
+  .reply p{margin:0;flex:1;min-width:0;font-size:.95rem}
+  .reply .ph{color:var(--accent-ink);font-weight:600}
+  .copy{flex:none;border:1px solid var(--line);background:transparent;color:var(--accent-ink);
+    font:inherit;font-size:.72rem;font-weight:700;padding:6px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.15s}
+  .copy:hover{background:var(--accent);color:#3a2b1a;border-color:var(--accent)}
+  .copy.done{background:var(--good);color:#fff;border-color:var(--good)}
+  .tip{font-size:.82rem;color:var(--muted);margin:6px 0 0;padding-left:2px}
+  .callout{background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-ink);
+    border-radius:var(--radius);padding:13px 15px;font-size:.88rem}
+  .callout b{color:var(--warn-ink)}
+  .rules li{margin-bottom:9px;font-size:.9rem}.rules b{color:var(--accent-ink)}
+  .wa{display:inline-block;font-weight:700;color:var(--accent-ink);background:var(--bg);
+    border:1px dashed var(--line);border-radius:10px;padding:3px 9px;font-variant-numeric:tabular-nums;user-select:all}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.74rem}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 class="brand"><small>Espejito · Cancún</small>Respuestas para las chicas 💛</h1>
+    <p class="lead">Toca <b>Copiar</b>, pégalo y cambia el <span style="color:var(--accent-ink);font-weight:600">[nombre]</span>. Siempre que puedas, lleva la charla al DM o WhatsApp.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Secciones">
+    <button class="tab" role="tab" id="t-com" aria-controls="p-com" aria-selected="true">💬 Comentarios</button>
+    <button class="tab" role="tab" id="t-dm" aria-controls="p-dm" aria-selected="false">📩 DM</button>
+    <button class="tab" role="tab" id="t-wa" aria-controls="p-wa" aria-selected="false">📱 WhatsApp</button>
+    <button class="tab" role="tab" id="t-reg" aria-controls="p-reg" aria-selected="false">✨ Reglas</button>
+  </div>
+
+  <!-- COMENTARIOS -->
+  <section class="panel" id="p-com" role="tabpanel" aria-labelledby="t-com">
+    <h2 class="sec-title">Comentarios (público)</h2>
+    <p class="sec-note">Cortos, con un emoji, y moviendo al privado. Nunca des precio final de tratamientos en público.</p>
+
+    <div class="card">
+      <h3>Precio · "¿cuánto cuesta?"</h3>
+      <div class="reply"><p>¡Hola, <span class="ph">muñeca</span>! 😍 Te paso todos los detalles por DM para darte el precio justo según lo que buscas ✨</p><button class="copy">Copiar</button></div>
+      <div class="reply"><p>Depende de lo que quieras lograr 💁‍♀️ Te escribo al privado y te armo opciones a tu medida 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>"info" · "quiero saber más"</h3>
+      <div class="reply"><p>¡Claro que sí! 🫶 Revisa tu DM que ya te escribí 💌</p><button class="copy">Copiar</button></div>
+      <div class="reply"><p>Te mando toda la info al privado ahora mismo ✨</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Comenta "CONTROL" · pilar bienestar</h3>
+      <div class="reply"><p>¡Eso! 🙌 Te acabo de escribir al DM para contarte cómo funciona el acompañamiento 💛</p><button class="copy">Copiar</button></div>
+      <div class="reply"><p>Me encanta que te animes 🔥 Revisa tu bandeja, ya tienes mensaje ✨</p><button class="copy">Copiar</button></div>
+      <p class="tip">Hablar de <b>acompañamiento</b>, nunca prometer resultados.</p>
+    </div>
+
+    <div class="card">
+      <h3>Agendar · "¿cómo saco cita?"</h3>
+      <div class="reply"><p>¡Con gusto te agendamos! 📅 Escríbenos al WhatsApp 998 219 4677 o te paso el link por DM 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Ubicación</h3>
+      <div class="reply"><p>Estamos en Cancún 🌴 Te paso la ubicación exacta por DM para que llegues fácil ✨</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Preguntan por un servicio</h3>
+      <div class="reply"><p>¡Sí hacemos <span class="ph">[servicio]</span>! 😍 Te cuento todo por DM y vemos qué te queda increíble 💅</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Escéptica · "¿de verdad funciona?"</h3>
+      <div class="reply"><p>Te entiendo 🙌 Mejor te muestro resultados reales de clientas por DM y tú decides 💛</p><button class="copy">Copiar</button></div>
+      <p class="tip">Mostrar, no prometer.</p>
+    </div>
+
+    <div class="card">
+      <h3>Piropo · emojis · "qué linda"</h3>
+      <div class="reply"><p>¡Graciasss, <span class="ph">muñeca</span>! 🥰 Te esperamos para consentirte ✨</p><button class="copy">Copiar</button></div>
+      <div class="reply"><p>🫶🫶🫶</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Comentario negativo · queja</h3>
+      <div class="reply"><p>Lamento que te sientas así 🙏 Queremos resolverlo contigo; te escribimos al DM para atenderte personalmente 💛</p><button class="copy">Copiar</button></div>
+      <p class="tip">Contener en 1 línea y pasar a privado. Nunca discutir en comentarios ni borrar de golpe.</p>
+    </div>
+  </section>
+
+  <!-- DM -->
+  <section class="panel" id="p-dm" role="tabpanel" aria-labelledby="t-dm" hidden>
+    <h2 class="sec-title">DM / Privado</h2>
+    <p class="sec-note">Un poco más cálidos y con <b>una</b> pregunta, para que te contesten.</p>
+
+    <div class="card">
+      <h3>Bienvenida · primer contacto</h3>
+      <div class="reply"><p>¡Hola, <span class="ph">[nombre]</span>! 🥰 Bienvenida a Espejito ✨ Cuéntame, ¿qué te gustaría consentirte hoy? Te armo la mejor opción 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Respondió "CONTROL" · pilar bienestar</h3>
+      <div class="reply"><p>¡Hola, <span class="ph">[nombre]</span>! 💛 Qué bueno que te animas ✨ En Espejito te acompañamos con valoración profesional para que te sientas mejor, con más energía y en forma, a tu ritmo. Cuéntame: ¿qué es lo que más te gustaría mejorar de cómo te sientes hoy? Con eso te digo el siguiente paso 🙌</p><button class="copy">Copiar</button></div>
+      <p class="tip">Si preguntan por temas médicos → "Eso lo valora nuestra especialista en tu cita, cada cuerpo es distinto 💛". Nunca prometer kilos, dosis ni "curar".</p>
+    </div>
+
+    <div class="card">
+      <h3>Precio + agendar</h3>
+      <div class="reply"><p>Con gusto 💁‍♀️ El <span class="ph">[servicio]</span> va desde $<span class="ph">[precio]</span>. Si quieres te aparto lugar esta semana — ¿te acomoda mejor entre semana o fin? 📅</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Horarios · disponibilidad</h3>
+      <div class="reply"><p>Tenemos espacio <span class="ph">[días/horario]</span> 🗓️ ¿Cuál te late más y te lo aparto, <span class="ph">[nombre]</span>? ✨</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Seguimiento · no contestó</h3>
+      <div class="reply"><p>¡Hola de nuevo, <span class="ph">[nombre]</span>! 🫶 No quiero que se te pase tu lugar. ¿Te agendo para esta semana? 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Confirmación de cita</h3>
+      <div class="reply"><p>¡Listo, <span class="ph">[nombre]</span>! 🎉 Quedas para <span class="ph">[día]</span> a las <span class="ph">[hora]</span>. Te esperamos en Espejito ✨ Cualquier cosa, por aquí estoy 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Piden algo que no se hace</h3>
+      <div class="reply"><p>Por ahora no manejamos ese servicio, pero te cuento lo que sí podemos hacer por ti 💛 <span class="ph">[opción]</span></p><button class="copy">Copiar</button></div>
+    </div>
+  </section>
+
+  <!-- WHATSAPP -->
+  <section class="panel" id="p-wa" role="tabpanel" aria-labelledby="t-wa" hidden>
+    <h2 class="sec-title">WhatsApp</h2>
+    <p class="sec-note">Donde más se cierra la cita. Guarda estas como <b>Respuestas rápidas</b> en WhatsApp Business.</p>
+
+    <div class="card">
+      <h3>Saludo automático</h3>
+      <div class="reply"><p>¡Hola! 🥰 Gracias por escribir a Espejito ✨ En un momentito te atendemos. Para agilizar, cuéntanos qué servicio te interesa 💛</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Fuera de horario · ausencia</h3>
+      <div class="reply"><p>¡Hola! 💛 Ahorita estamos consintiendo clientas y no podemos contestar. En cuanto estemos libres te escribimos ✨ Nuestro horario: Lun a Dom 9am–9pm.</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Mandar ubicación + cita</h3>
+      <div class="reply"><p>Estamos en Fracc. Andalucía II, Cancún 📍 ¿Te aparto lugar esta semana, <span class="ph">[nombre]</span>? Dime qué día te acomoda 📅</p><button class="copy">Copiar</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Número de la sala</h3>
+      <div class="reply"><p>WhatsApp: <span class="wa">998 219 4677</span></p><button class="copy" data-copy="998 219 4677">Copiar</button></div>
+    </div>
+  </section>
+
+  <!-- REGLAS -->
+  <section class="panel" id="p-reg" role="tabpanel" aria-labelledby="t-reg" hidden>
+    <h2 class="sec-title">Reglas de oro</h2>
+    <p class="sec-note">3 cosas que nos cuidan la cuenta y el tono de la marca.</p>
+
+    <div class="callout" style="margin-bottom:14px">
+      <b>⚠️ Salud y peso:</b> nunca prometer kilos, resultados ni hablar de dosis/medicamentos en texto. Siempre: "eso lo valora nuestra especialista en tu cita 💛". Y nunca nombrar productos o sustancias en comentarios públicos.
+    </div>
+
+    <div class="card">
+      <ul class="rules" style="margin:0;padding-left:18px">
+        <li>Personaliza <b>siempre</b> con el nombre; se nota y convierte más.</li>
+        <li>Máximo <b>1 emoji</b> en frases cortas, 2–3 en DM. Sin exagerar.</li>
+        <li>Precio de tratamientos → <b>al DM</b>, nunca en público.</li>
+        <li>Quejas → <b>1 línea</b> amable en público + resolver en privado. Nunca discutir ni borrar de golpe.</li>
+        <li>El objetivo del comentario es <b>llevar al DM/WhatsApp</b>, no cerrar la venta ahí.</li>
+        <li>Codeword del embudo: <b>CONTROL</b> (ese dispara el DM del pilar bienestar).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Tono Espejito</h3>
+      <div class="reply" style="border:0;padding-top:2px"><p>Cálido, coqueto y cercano 💛 Tratamos de "muñeca", nunca frío ni robótico. Vendemos <b>deseo y seguridad</b>, no procedimientos.</p></div>
+    </div>
+  </section>
+
+  <footer>Espejito Espejito · Guía interna para el equipo · Tratamos de "muñeca" 💛</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  function show(tab){
+    tabs.forEach(function(t){
+      var on=t===tab;
+      t.setAttribute('aria-selected',on?'true':'false');
+      document.getElementById(t.getAttribute('aria-controls')).hidden=!on;
+    });
+    try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){show(t);});
+    t.addEventListener('keydown',function(e){
+      var i=tabs.indexOf(t);
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+        e.preventDefault();
+        var n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];
+        n.focus();show(n);
+      }
+    });
+  });
+  function flash(btn){
+    var old=btn.textContent;
+    btn.textContent='¡Copiado! ✓';btn.classList.add('done');
+    setTimeout(function(){btn.textContent=old;btn.classList.remove('done');},1400);
+  }
+  function fallback(text,btn){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.focus();ta.select();
+      document.execCommand('copy');document.body.removeChild(ta);
+      flash(btn);
+    }catch(e){
+      var r=document.createRange();r.selectNodeContents(btn.closest('.reply').querySelector('p'));
+      var s=getSelection();s.removeAllRanges();s.addRange(r);
+    }
+  }
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var text=btn.getAttribute('data-copy')||btn.closest('.reply').querySelector('p').innerText.trim();
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){flash(btn);},function(){fallback(text,btn);});
+      }else{fallback(text,btn);}
+    });
+  });
+})();
+</script>
+</body>
+</html>
